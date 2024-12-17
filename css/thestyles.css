@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.anchor-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ff9900;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.content-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+.teams-section {
+    background-color: #fff;
+}
+
+.rules-section {
+    background-color: #f0f0f0;
+}
+
+.image-section {
+    text-align: center;
+}
+
+.basketball-image {
+    max-width: 100%;
+    height: auto;
+}
+
+.video-section {
+    background-color: #fff;
+}
+
+.tableau-section {
+    background-color: #f0f0f0;
+}
+
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}

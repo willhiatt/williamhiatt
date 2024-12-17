@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Shooting Game</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #1e1e1e;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Basketball Court */
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #2e2e2e;
+        }
+
+        /* Basketball Hoop */
+        #hoop {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 80px;
+            background-color: red;
+            border-radius: 5px;
+        }
+
+        #hoop::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 25%;
+            width: 50%;
+            height: 50px;
+            border: 3px dashed white;
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* Basketball */
+        #ball {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background-color: orange;
+            border: 3px solid #000;
+            border-radius: 50%;
+            transition: all 1s ease-in-out;
+        }
+
+        /* Scoreboard */
+        #scoreboard {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: gold;
+            opacity: 0.7;
+            border-radius: 50%;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Sayings Styles */
+        #saying {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        /* Footer */
+        #footer {
+            position: fixed;
+            bottom: 20px;
+            left: 20%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Game Container -->
+    <div id="game-container">
+        <!-- Hoop -->
+        <div id="hoop"></div>
+        <!-- Basketball -->
+        <div id="ball"></div>
+        <!-- Scoreboard -->
+        <div id="scoreboard">Score: 0</div>
+        <!-- Sayings -->
+        <div id="saying"></div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        Press the space bar to shoot!
+    </div>
+
+    <script>
+        const ball = document.getElementById('ball');
+        const hoop = document.getElementById('hoop');
+        const scoreboard = document.getElementById('scoreboard');
+        const gameContainer = document.getElementById('game-container');
+        const saying = document.getElementById('saying');
+        let score = 0;
+
+        // Array of sayings for made and missed shots
+        const sayingsMade = ["Nice shot!", "Great work!", "You got this!", "Swish!", "Excellent!"];
+        const sayingsMissed = ["Keep shooting!", "Almost!", "You'll get it next time!", "Don't give up!", "Try again!"];
+
+        // Shoot ball function
+        function shootBall() {
+            const hoopRect = hoop.getBoundingClientRect();
+            const ballRect = ball.getBoundingClientRect();
+            const isMake = Math.random() > 0.5; // 50/50 chance of make or miss
+
+            if (isMake) {
+                // Calculate position to align the ball with the hoop
+                const hoopX = hoopRect.left + hoopRect.width / 2 - ballRect.width / 2;
+                const hoopY = hoopRect.top + hoopRect.height / 2;
+
+                // Animate ball to the center of the hoop and drop slightly down
+                ball.style.transform = `translate(${hoopX - ballRect.left}px, ${hoopY - ballRect.top}px)`;
+                setTimeout(() => {
+                    ball.style.transform = `translate(${hoopX - ballRect.left}px, ${hoopY - ballRect.top + 20}px)`;
+                    updateScore();
+                    displaySaying(sayingsMade);
+                }, 800);
+            } else {
+                // Randomize miss position
+                const missX = Math.random() * 200 - 100; // Slight horizontal deviation
+                const missY = -350 - Math.random() * 50; // Height variation
+                ball.style.transform = `translate(${missX}px, ${missY}px)`;
+                displaySaying(sayingsMissed);
+            }
+
+            setTimeout(resetBall, 1200); // Reset ball position after animation
+        }
+
+        // Update score and celebrate if needed
+        function updateScore() {
+            score += 3;
+            scoreboard.textContent = `Score: ${score}`;
+            if (score >= 9) {
+                celebrate();
+                score = 0;
+                setTimeout(() => {
+                    scoreboard.textContent = `Score: 0`;
+                }, 1000);
+            }
+        }
+
+        // Reset ball to original position
+        function resetBall() {
+            ball.style.transform = 'translateX(-50%)';
+        }
+
+        // Confetti celebration
+        function celebrate() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                gameContainer.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        // Random confetti colors
+        function getRandomColor() {
+            const colors = ['gold', 'red', 'blue', 'green', 'purple', 'orange'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Display random saying
+        function displaySaying(sayingsArray) {
+            const randomSaying = sayingsArray[Math.floor(Math.random() * sayingsArray.length)];
+            saying.textContent = randomSaying;
+            saying.style.opacity = 1;
+            setTimeout(() => {
+                saying.style.opacity = 0;
+            }, 1000);
+        }
+
+        // Event listeners for shooting
+        document.addEventListener('click', shootBall);
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                shootBall();
+            }
+        });
+    </script>
+</body>
+</html>
